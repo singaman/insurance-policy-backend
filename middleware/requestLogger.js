@@ -1,6 +1,6 @@
-/**
- * Log incoming requests with emoji prefix for visibility
- */
+
+//   Log incoming requests with emoji prefix for visibility
+ 
 const requestLogger = (req, res, next) => {
 	const start = Date.now();
 	const originalSend = res.send;

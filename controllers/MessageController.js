@@ -1,7 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
-const ScheduledMessage = require('../models/Message');
+const Message = require('../models/Message');
 
-const createScheduledMessage = async (req, res, next) => {
+const createMessage = async (req, res, next) => {
     try {
         const { message, day, time } = req.body;
 
@@ -22,22 +22,22 @@ const createScheduledMessage = async (req, res, next) => {
             });
         }
 
-        const scheduledMessage = new ScheduledMessage({
+        const Message = new Message({
             message,
             scheduledFor: scheduledDateTime,
             status: 'pending'
         });
 
-        await scheduledMessage.save();
+        await Message.save();
 
         res.status(StatusCodes.CREATED).json({
             success: true,
             message: '⏰ Message scheduled successfully',
             data: {
-                id: scheduledMessage._id,
-                message: scheduledMessage.message,
-                scheduledFor: scheduledMessage.scheduledFor,
-                status: scheduledMessage.status
+                id: Message._id,
+                message: Message.message,
+                scheduledFor: Message.scheduledFor,
+                status: Message.status
             }
         });
 
@@ -46,9 +46,9 @@ const createScheduledMessage = async (req, res, next) => {
     }
 };
 
-const getScheduledMessages = async (req, res, next) => {
+const getMessages = async (req, res, next) => {
     try {
-        const messages = await ScheduledMessage.find()
+        const messages = await Message.find()
             .sort({ scheduledFor: 1 })
             .lean();
 
@@ -63,4 +63,4 @@ const getScheduledMessages = async (req, res, next) => {
     }
 };
 
-module.exports = { createScheduledMessage, getScheduledMessages };
+module.exports = { createMessage, getMessages };

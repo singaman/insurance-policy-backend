@@ -7,7 +7,7 @@ module.exports = {
 		POLICY_CARRIERS: 'policycarriers',
 		AGENTS: 'agents',
 		ACCOUNTS: 'accounts',
-		SCHEDULED_MESSAGES: 'scheduledmessages'
+		MESSAGES: 'Messages'
 	},
 
 	// Message statuses
@@ -22,6 +22,4 @@ module.exports = {
 	ALLOWED_FILE_TYPES: ['.xlsx', '.xls', '.csv'],
 	UPLOADS_DIR: 'uploads',
 
-	// Cron schedule (from services/scheduler.js)
-	SCHEDULER_CRON: '* * * * *' // every minute
 };

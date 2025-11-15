@@ -3,10 +3,10 @@ const router = express.Router();
 
 const uploadRoutes = require('./upload');
 const policyRoutes = require('./policies');
-const scheduledRoutes = require('./scheduled');
+const MessageRoutes = require('./Message');
 
 router.use('/upload', uploadRoutes);
 router.use('/policies', policyRoutes);
-router.use('/scheduled', scheduledRoutes);
+router.use('/Message', MessageRoutes);
 
 module.exports = router;

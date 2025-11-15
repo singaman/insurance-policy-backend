@@ -1,7 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
 const { User, Policy } = require('../../models');
 
-// helper: build populate array only for paths present in the Policy schema
+// build populate array only for paths present in the Policy schema
 const buildSafePopulate = (model, specs) => {
 	const out = [];
 	for (const [p, spec] of Object.entries(specs)) {

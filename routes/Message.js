@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { createScheduledMessage, getScheduledMessages } = require('../controllers/scheduledController');
+const { createMessage, getMessages } = require('../controllers/MessageController');
 
 // POST: Create a scheduled message
-router.post('/messages', createScheduledMessage);
+router.post('/messages', createMessage);
 
 // GET: List all scheduled messages
-router.get('/messages', getScheduledMessages);
+router.get('/messages', getMessages);
 
 module.exports = router;

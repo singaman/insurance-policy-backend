@@ -1,7 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
 const { User, Policy } = require('../models');
 
-// helper: build populate array only for paths present in the Policy schema
+// Build populate array only for paths present in the Policy schema
 const buildSafePopulate = (model, specs) => {
 	// specs: { pathName: { select: '...' }, ... }
 	const out = [];
@@ -22,7 +22,8 @@ const searchPolicies = async (req, res) => {
 
 		// Find user by first name
 		const users = await User.find({ 
-            firstName: { $regex: username, $options: 'i' } 
+            // firstName: { $regex: username, $options: 'i' }
+             firstName: username 
         });
 
         if (users.length === 0) {

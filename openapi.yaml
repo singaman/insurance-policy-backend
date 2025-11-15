@@ -1,126 +1,16 @@
 openapi: 3.0.1
 info:
   title: Insurance App API
-  description: API for uploading policy data, searching policies, aggregation, and scheduling messages (generated from codebase).
+  description: API for uploading policy data, searching policies, and aggregation
   version: 1.0.0
 servers:
   - url: http://localhost:3000
-    description: Local server (adjust port via PORT env)
-# Note: routes are mounted under /api in `server.js`. Paths below include the /api prefix.
+    description: Local server
+
 paths:
-  /api/upload:
-    post:
-      summary: Upload a spreadsheet or CSV file for processing (multipart/form-data)
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                file:
-                  type: string
-                  format: binary
-                  description: The file to upload (.xlsx, .xls, .csv)
-      responses:
-        '200':
-          description: File processed successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UploadResponse'
-        '400':
-          description: Bad request (missing file or validation)
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Server error during upload/processing
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  /api/upload/local:
-    post:
-      summary: Upload using a local file path (server copies and processes the file)
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                filePath:
-                  type: string
-                  example: C:\\path\\to\\file.xlsx
-                  description: Absolute or relative path to a local file; optional if FILE_PATH env var is set
-      responses:
-        '200':
-          description: File processed successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UploadResponse'
-        '400':
-          description: Bad request (missing or invalid path / unsupported extension)
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Server error during local upload/processing
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  /api/policies/search:
-    get:
-      summary: Search policies by username (first name match, case-insensitive)
-      parameters:
-        - name: username
-          in: query
-          description: Search term matched against user's first name (regex, case-insensitive)
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Matching policies
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  count:
-                    type: integer
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/PolicySummary'
-        '400':
-          description: Username is required
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: No user found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Search failed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
   /api/policies/aggregated:
     get:
-      summary: Aggregated policies grouped by user (total count, list of policies, categories, carriers)
+      summary: Get aggregated policies grouped by user
       responses:
         '200':
           description: Aggregated policy data
@@ -143,59 +33,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/scheduled/messages:
-    post:
-      summary: Schedule a message for a particular day and time
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [message, day, time]
-              properties:
-                message:
-                  type: string
-                  example: 'Reminder: policy renewal'
-                day:
-                  type: string
-                  example: '2025-11-20'
-                  description: Date portion (YYYY-MM-DD or compatible) used with `time` to form a Date
-                time:
-                  type: string
-                  example: '14:30:00'
-                  description: Time portion (HH:MM[:SS]) used with `day` to form a Date
-      responses:
-        '201':
-          description: Message scheduled successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  message:
-                    type: string
-                  data:
-                    $ref: '#/components/schemas/ScheduledMessage'
-        '400':
-          description: Validation error (missing fields or invalid date/time)
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/policies/search:
     get:
-      summary: Retrieve scheduled messages (sorted by scheduled time)
+      summary: Search policies by username
+      parameters:
+        - name: username
+          in: query
+          description: Search term for user's first name
+          required: true
+          schema:
+            type: string
       responses:
         '200':
-          description: List of scheduled messages
+          description: Matching policies
           content:
             application/json:
               schema:
@@ -208,70 +59,59 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/ScheduledMessage'
+                      $ref: '#/components/schemas/PolicySummary'
+        '400':
+          description: Username is required
+        '404':
+          description: No user found
         '500':
-          description: Server error fetching messages
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          description: Search failed
+
+  /api/upload:
+    post:
+      summary: Upload spreadsheet or CSV file
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: File to upload (.xlsx, .xls, .csv)
+      responses:
+        '200':
+          description: File processed successfully
+        '400':
+          description: Bad request
+        '500':
+          description: Server error
+
+  /api/upload/local:
+    post:
+      summary: Upload using local file path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filePath:
+                  type: string
+                  example: C:\\path\\to\\file.xlsx
+      responses:
+        '200':
+          description: File processed successfully
+        '400':
+          description: Bad request
+        '500':
+          description: Server error
+
 components:
   schemas:
-    ErrorResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: false
-        message:
-          type: string
-        error:
-          type: string
-    UploadResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: true
-        message:
-          type: string
-        data:
-          type: object
-          description: Worker processing output (varies depending on file content)
-    UserSummary:
-      type: object
-      properties:
-        _id:
-          type: string
-        firstName:
-          type: string
-        email:
-          type: string
-        phone:
-          type: string
-    PolicySummary:
-      type: object
-      properties:
-        _id:
-          type: string
-        policyNumber:
-          type: string
-        policyStartDate:
-          type: string
-        policyEndDate:
-          type: string
-        userId:
-          $ref: '#/components/schemas/UserSummary'
-        categoryId:
-          type: object
-          properties:
-            categoryName:
-              type: string
-        companyId:
-          type: object
-          properties:
-            companyName:
-              type: string
     AggregatedPolicy:
       type: object
       properties:
@@ -306,19 +146,61 @@ components:
           type: array
           items:
             type: string
-    ScheduledMessage:
+
+    ErrorResponse:
       type: object
       properties:
-        id:
-          type: string
-        _id:
-          type: string
+        success:
+          type: boolean
+          example: false
         message:
           type: string
-        scheduledFor:
+        error:
           type: string
-          format: date-time
-        status:
-          type: string
-          example: pending
 
+    PolicySummary:
+      type: object
+      properties:
+        _id:
+          type: string
+        policyNumber:
+          type: string
+        policyStartDate:
+          type: string
+        policyEndDate:
+          type: string
+        userId:
+          $ref: '#/components/schemas/UserSummary'
+        categoryId:
+          type: object
+          properties:
+            categoryName:
+              type: string
+        companyId:
+          type: object
+          properties:
+            companyName:
+              type: string
+
+    UploadResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+        data:
+          type: object
+
+    UserSummary:
+      type: object
+      properties:
+        _id:
+          type: string
+        firstName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string

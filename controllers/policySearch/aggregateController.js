@@ -1,14 +1,14 @@
 const { StatusCodes } = require('http-status-codes');
 const { User, Policy } = require('../../models');
 
-// Aggregated policies grouped by user (with optional username filter)
+// Aggregated policies grouped by user
 const getAggregatedPolicies = async (req, res, next) => {
 	try {
 		const username = (req.query.username || '').trim();
 		let matchStage = null;
 
 		if (username) {
-			// Find matching users first and limit aggregation to their IDs
+			// Find matching users first name or complete name
 			const re = new RegExp(username, 'i');
 			const users = await User.find({ firstName: re }).select('_id').lean();
 
