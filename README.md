@@ -37,7 +37,7 @@ A Node.js backend service for insurance policy management with file upload, sear
 
 ## Task 2: CPU Monitoring ✅ COMPLETED
 
-### ⚡ CPU Monitoring Service
+### 1:⚡ CPU Monitoring Service
 - **File**: `services/cpuMonitor.js`
 - **Features**:
   - Real-time CPU utilization tracking
@@ -57,6 +57,20 @@ A Node.js backend service for insurance policy management with file upload, sear
 | `POST` | `/api/upload/local` | Upload from local file path |
 | `GET` | `/api/policies/search?username=...` | Search policies by user name |
 | `GET` | `/api/policies/aggregated` | Get aggregated policy data |
+
+
+## Task 2: Message Service ✅ COMPLETED
+
+### 💬 Message Service
+- **Endpoint**: `POST /api/messages`
+- **Request Body**:
+  ```json
+  {
+    "message": "Your message content",
+    "day": "2024-01-15",
+    "time": "14:30"
+  }
+
 
 ## 🛠️ Development
 
