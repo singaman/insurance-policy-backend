@@ -1,92 +1,70 @@
-# Insurance Policy Backend API
+A robust Node.js backend service for insurance policy management with file processing, search capabilities, data aggregation, and system monitoring.
 
-A Node.js backend service for insurance policy management with file upload, search, aggregation, and CPU monitoring features.
+## 🏗️ Architecturee
 
-## Database Collections
+- **Framework**: Express.js
+- **Database**: MongoDB with Mongoose ODM
+- **File Processing**: Worker threads for non-blocking operations
+- **Monitoring**: Real-time CPU utilization tracking
+- **API Design**: RESTful endpoints with proper error handling
 
-1. **Agent** - Agent Name
-2. **User** - first name, DOB, address, phone number, state, zip code, email, gender, userType
-3. **User's Account** - Account Name
-4. **Policy Category (LOB)** - category_name
-5. **Policy Carrier** - company_name
-6. **Policy Info** - policy number, policy start date, policy end date, policy category ID, company ID, user ID
+## 📊 Database Collections
 
-## Task 1: File Upload & Search/Aggregation ✅ COMPLETED
+| Collection | Description | Key Fields |
+|------------|-------------|------------|
+| **Agent** | Insurance agents | Agent Name |
+| **User** | Policy holders | firstName, DOB, address, phone, email, userType |
+| **User''s Account** | User accounts | Account Name |
+| **Policy Category** | Line of Business | category_name |
+| **Policy Carrier** | Insurance companies | company_name |
+| **Policy Info** | Policy details | policyNumber, startDate, endDate, categoryId, companyId, userId |
 
-### 📤 Upload APIs
-- **Endpoint**: `POST /api/upload`
-- **Features**: 
-  - Upload `.xlsx`, `.xls`, `.csv` files via worker threads (non-blocking)
-  - Multipart form-data support
-- **Alternative**: `POST /api/upload/local` - Upload from local file path
-- **Status**: ✅ Implemented
+## 🚀 Features
 
-### 🔍 Search API
-- **Endpoint**: `GET /api/policies/search?username=<name>`
-- **Features**: 
-  - Case-insensitive search on user's first name
-  - Returns matching user's policies with populated references
-- **Status**: ✅ Implemented
+### ✅ Task 1: File Upload & Data Processing
+- **File Upload API** - Process Excel/CSV files with worker threads
+- **Policy Search** - Case-insensitive user name search
+- **Data Aggregation** - Group policies by user with analytics
 
-### 📊 Aggregation API
-- **Endpoint**: `GET /api/policies/aggregated`
-- **Features**: 
-  - Groups policies by user
-  - Returns total policies, categories, and carriers per user
-- **Status**: ✅ Implemented
+### ✅ Task 2: System Monitoring & Message Service
+- **CPU Monitoring** - Real-time server health monitoring
+- **Message Storage** - Store messages with date/time for future reference
 
-## Task 2: CPU Monitoring ✅ COMPLETED
+## 📡 API Endpoints
 
-### 1:⚡ CPU Monitoring Service
-- **File**: `services/cpuMonitor.js`
-- **Features**:
-  - Real-time CPU utilization tracking
-  - Configurable threshold (default: 70%)
-  - Automatic logging and alerts
-- **Environment Variables**:
-  - `CPU_THRESHOLD=70` - CPU usage threshold percentage
-  - `CPU_CHECK_INTERVAL=5000` - Check interval in milliseconds
-  - `DISABLE_CPU_MONITOR=1` - Disable monitoring for development
-- **Status**: ✅ Implemented
-
-## 🚀 API Endpoints
-
+### File Operations
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `POST` | `/api/upload` | Upload policy file (multipart/form-data) |
 | `POST` | `/api/upload/local` | Upload from local file path |
+
+### Policy Operations
+| Method | Endpoint | Description |
+|--------|----------|-------------|
 | `GET` | `/api/policies/search?username=...` | Search policies by user name |
 | `GET` | `/api/policies/aggregated` | Get aggregated policy data |
 
+### Message Operations
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/Message/messages` | Store message with date/time |
+| `GET` | `/api/Message/messages` | Retrieve stored messages |
 
-## Task 2: Message Service ✅ COMPLETED
-
-### 💬 Message Service
-- **Endpoint**: `POST /api/messages`
-- **Request Body**:
-  ```json
-  {
-    "message": "Your message content",
-    "day": "2024-01-15",
-    "time": "14:30"
-  }
-
-
-## 🛠️ Development
+## 🛠️ Installation & Setup
 
 ### Prerequisites
-- Node.js
-- MongoDB
-- npm
+- Node.js (v14 or higher)
+- MongoDB (local or Atlas)
+- npm or yarn
 
-### Installation & Running
+### Quick Start
 ```bash
 # Clone and setup
+git clone <repository-url>
 cd insurance-app
+
+# Install dependencies
 npm install
 
-# Set environment variables
-$env:MONGODB_URI = 'mongodb://localhost:27017/insurance-db'
-
-# Start server
-node server.js
+# Start development server
+npm run start
