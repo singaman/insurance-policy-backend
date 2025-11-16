@@ -12,32 +12,24 @@ const createMessage = async (req, res, next) => {
             });
         }
 
-        // Combine day and time into a Date object
-        const scheduledDateTime = new Date(`${day}T${time}`);
-        
-        if (isNaN(scheduledDateTime.getTime())) {
-            return res.status(StatusCodes.BAD_REQUEST).json({
-                success: false,
-                message: 'Invalid date or time format (use YYYY-MM-DD and HH:MM:SS)'
-            });
-        }
-
-        const Message = new Message({
+        // ? Simple storage - no scheduling logic
+        const newMessage = new Message({
             message,
-            scheduledFor: scheduledDateTime,
-            status: 'pending'
+            day,
+            time
         });
 
-        await Message.save();
+        await newMessage.save();
 
         res.status(StatusCodes.CREATED).json({
             success: true,
-            message: '⏰ Message scheduled successfully',
+            message: 'Message stored successfully',
             data: {
-                id: Message._id,
-                message: Message.message,
-                scheduledFor: Message.scheduledFor,
-                status: Message.status
+                id: newMessage._id,
+                message: newMessage.message,
+                day: newMessage.day,
+                time: newMessage.time,
+                createdAt: newMessage.createdAt
             }
         });
 
@@ -49,7 +41,7 @@ const createMessage = async (req, res, next) => {
 const getMessages = async (req, res, next) => {
     try {
         const messages = await Message.find()
-            .sort({ scheduledFor: 1 })
+            .sort({ createdAt: -1 })
             .lean();
 
         res.status(StatusCodes.OK).json({
